@@ -111,9 +111,21 @@ Visit `http://localhost:5173`. The backend auto-creates `revora.db` (SQLite) on 
 
 **Free-tier caveat:** Render's free web services spin down after 15 minutes of inactivity and take ~30–60s to wake on the next request — the first contact-form submission after idle time will feel slow. Upgrade to a paid instance to avoid that if this goes live for real traffic.
 
+## Email notifications
+
+When a lead is submitted, `POST /api/contact` fires a background task (`app/email.py`) that emails the site owner via [Resend](https://resend.com). It's fire-and-forget: the lead is saved and the API responds regardless of whether the email send succeeds, and it silently no-ops if `RESEND_API_KEY` isn't set (e.g. local dev).
+
+**Setup**
+
+1. Sign up at resend.com and create an API key.
+2. Set these env vars (`backend/.env` locally, or the Render service's Environment tab in production):
+   - `RESEND_API_KEY` — the key from Resend.
+   - `NOTIFY_EMAIL` — where lead notifications should land (e.g. your inbox).
+   - `FROM_EMAIL` — defaults to `Revora <onboarding@resend.dev>`, Resend's shared test sender that works with zero setup but only delivers to the email address you signed up with. To send to any address, verify your own domain in Resend and change this to `Revora <leads@yourdomain.com>`.
+3. Each notification email has `reply_to` set to the lead's email, so replying from your inbox goes straight to them.
+
 ## Next steps / extensions
 
 - Add auth (even a simple API key) in front of `GET /api/contact` before it's used beyond local development.
-- Add email notifications (e.g. via a transactional email API) when a new lead is submitted.
 - Swap SQLite for Postgres by changing `DATABASE_URL` — the SQLAlchemy models don't need to change.
 - Add a CI step running `npm run build` and `pytest`/`ruff` once tests exist.
