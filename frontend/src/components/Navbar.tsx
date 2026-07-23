@@ -16,8 +16,8 @@ export default function Navbar({ onContactClick }: NavbarProps) {
 
   return (
     <header id="home" className="sticky top-0 z-40 border-b border-white/10 bg-brand-ink">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-5 lg:px-10">
-        <div className="flex items-center gap-8">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-5 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:px-10">
+        <div className="flex items-center gap-8 lg:justify-self-start">
           <a href="#home" className="flex items-center gap-2">
             <span className="flex h-8 w-8 items-center justify-center rounded-md bg-brand-blue text-sm font-bold text-white">
               R
@@ -32,13 +32,13 @@ export default function Navbar({ onContactClick }: NavbarProps) {
           <button
             type="button"
             onClick={onContactClick}
-            className="hidden rounded-md bg-brand-blue px-5 py-2 text-sm font-semibold text-white transition hover:bg-brand-blue-dark sm:inline-block"
+            className="hidden rounded-md bg-brand-blue px-5 py-2 text-sm font-semibold text-white transition hover:bg-brand-blue-dark sm:inline-block lg:hidden"
           >
             Contact Us
           </button>
         </div>
 
-        <nav className="hidden items-center gap-8 lg:flex">
+        <nav className="hidden items-center gap-8 lg:flex lg:justify-self-center">
           {LINKS.map((link) => (
             <a
               key={link.label}
@@ -49,6 +49,14 @@ export default function Navbar({ onContactClick }: NavbarProps) {
             </a>
           ))}
         </nav>
+
+        <button
+          type="button"
+          onClick={onContactClick}
+          className="hidden rounded-md bg-brand-blue px-5 py-2 text-sm font-semibold text-white transition hover:bg-brand-blue-dark lg:inline-block lg:justify-self-end"
+        >
+          Contact Us
+        </button>
 
         <button
           type="button"
