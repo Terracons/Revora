@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useContent } from "./hooks/useContent";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -16,9 +16,36 @@ import ContactModal from "./components/ContactModal";
 export default function App() {
   const { content, loading, error } = useContent();
   const [isContactOpen, setContactOpen] = useState(false);
+  const userControlledRef = useRef(false);
 
-  const openContact = () => setContactOpen(true);
-  const closeContact = () => setContactOpen(false);
+  const openContact = () => {
+    userControlledRef.current = true;
+    setContactOpen(true);
+  };
+  const closeContact = () => {
+    userControlledRef.current = true;
+    setContactOpen(false);
+  };
+
+  // Auto-open the discovery call form 5s after the visitor starts scrolling,
+  // unless they've already opened or closed it themselves by then.
+  useEffect(() => {
+    let timeoutId: number | undefined;
+
+    const handleScroll = () => {
+      window.removeEventListener("scroll", handleScroll);
+      timeoutId = window.setTimeout(() => {
+        if (!userControlledRef.current) setContactOpen(true);
+      }, 5000);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, []);
 
   if (loading) {
     return (
